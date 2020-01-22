@@ -4,6 +4,7 @@
     <ol class="breadcrumb">
       <li class="breadcrumb-item active" aria-current="page"><a href="{{url_for('ql_don_hang_tao_don_moi')}}">Thông tin</a></li>
       <li class="breadcrumb-item"><a href="#">Đơn hàng</a></li>
+      <li class="breadcrumb-item"><a href="#">Hoàn tất</a></li>
     </ol>
   </nav>
   
@@ -57,8 +58,8 @@
 
         </div>
         <div class="form-row">
-            {% if form.errors %}
-            {{ form.errors }}
+            {% if form_hoa_don.errors %}
+            {{ form_hoa_don.errors }}
             {% endif %}
         </div>
         

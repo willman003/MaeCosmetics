@@ -104,6 +104,7 @@ class Hoa_don(Base):
     ngay_tao_hoa_don = Column(DateTime, nullable = False)
     ma_khach_hang = Column(Integer, ForeignKey('khach_hang.ma_khach_hang'))
     tong_tien = Column(Float, nullable = False)
+    kenh_ban = Column(String(100))
     ma_hoa_don_kenh_ban = Column(String(50))
     nha_van_chuyen = Column(String(255))
     ma_van_don = Column(String(100))

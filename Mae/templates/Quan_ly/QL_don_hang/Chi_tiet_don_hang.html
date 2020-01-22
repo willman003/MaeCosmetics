@@ -15,8 +15,9 @@
               <tr>
                 <th scope="col">Mã sản phẩm</th>
                 <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Thuộc tính</th>
                 <th scope="col">Giá bán</th>
-                <th scope="col">Giá nhập</th>
+                <th scope="col">Giá nhập</th>                
                 <th scope="col"></th>
       
               </tr>
@@ -26,9 +27,10 @@
               <tr>
       
                 <td>{{item.ma_san_pham}}</td>
-                <td>{{item.ten_san_pham}}</td>  
+                <td>{{item.ten_san_pham}}</td>
+                <td>{{item.thuoc_tinh}}</td>  
                 
-                <td>{{"{:,}".format(item.gia_ban)}}</td>
+                <td>{{"{:,}".format(item.gia_ban)}}</td>{{item.thuoc_tinh}}</td>>
                 <td>{{"{:,}".format(item.gia_nhap)}}</td>
                 <td><a href="{{url_for('ql_don_hang_xoa_khoi_don_hang',ma_hd = hoa_don.ma_hoa_don, ma_sp = item.ma_san_pham)}}">Xoá</a></td>
 
@@ -41,7 +43,7 @@
     </div>
     <div class="row" style="margin-bottom: 10px;">
         <div class="col-sm-12 text-center">
-            <button class="btn btn-success"><a style=" color:white;" href="#">Kế tiếp</a></button>
+            <a class="btn btn-success" style=" color:white;" href="{{url_for('ql_don_hang_confirm',ma_hd = hoa_don.ma_hoa_don)}}">Kế tiếp</a>
         </div>
     </div>
 
@@ -99,13 +101,13 @@
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                 {%if page_filter.has_prev%}
-                  <li class="page-item"><a class="page-link" href="/QL-don-hang/theo-trang-thai/page_{{page_filter.prev_num}}">Trang trước</a></li>
+                  <li class="page-item"><a class="page-link" href="{{url_for('ql_don_hang_tao_don_moi_detail', ma_hd = hoa_don.ma_hoa_don, page = page_filter.prev_num)}}">Trang trước</a></li>
                 {%endif%}
                 {%for i in range(1,page_filter.pages+1)%}
-                  <li class="page-item {%if page_filter.page == i%} active {%endif%}"><a class="page-link" href="/QL-don-hang/theo-trang-thai/page_{{i}}">{{i}}</a></li>
+                  <li class="page-item {%if page_filter.page == i%} active {%endif%}"><a class="page-link" href="{{url_for('ql_don_hang_tao_don_moi_detail', ma_hd = hoa_don.ma_hoa_don, page = i)}}">{{i}}</a></li>
                 {%endfor%}  
                 {%if page_filter.has_next%}
-                  <li class="page-item"><a class="page-link" href="/QL-don-hang/theo-trang-thai/page_{{page_filter.next_num}}">Trang kế</a></li>
+                  <li class="page-item"><a class="page-link" href="{{url_for('ql_don_hang_tao_don_moi_detail', ma_hd = hoa_don.ma_hoa_don, page = page_filter.next_num)}}">Trang kế</a></li>
                 {%endif%}
                 </ul>
             </nav>

@@ -50,7 +50,7 @@ class Form_dang_ky(FlaskForm):
             raise validators.ValidationError('Tên đăng nhập đã được sử dụng!')
 
 class Form_hoa_don(FlaskForm):
-    ma_don_hang = fields.StringField('Mã hoá đơn (sendo):')
+    ma_don_hang = fields.StringField('Mã đơn hàng:')
     kenh_ban = fields.SelectField(choices=[('Sendo','Sendo'),('Shopee','Shopee'),('Lazada','Lazada'),('Khác','Khác')])
     ho_ten = fields.StringField('Tên khách hàng:')
     dia_chi = fields.StringField('Địa chỉ:')
@@ -64,6 +64,7 @@ class Form_hoa_don(FlaskForm):
     ,('VNPost','VN Post')
     ,('Others','Khác')
     ])
+    ma_van_don = fields.StringField('Mã vận đơn:')
     ghi_chu = fields.TextField('Ghi chú:')
     submit = fields.SubmitField('Kế tiếp')
 
@@ -78,11 +79,13 @@ class Form_hoa_don(FlaskForm):
 
     def tao_hoa_don(self, ngay_tao, ma_kh):
         hoa_don = Hoa_don()
+        hoa_don.ma_hoa_don_kenh_ban = self.ma_don_hang.data.strip()
         hoa_don.ngay_tao_hoa_don = ngay_tao
         hoa_don.ma_khach_hang = ma_kh
         hoa_don.tong_tien = 0
-        hoa_don.ma_hoa_don_kenh_ban = self.kenh_ban.data
+        hoa_don.kenh_ban = self.kenh_ban.data
         hoa_don.nha_van_chuyen = self.nha_van_chuyen.data
+        hoa_don.ma_van_don = self.ma_van_don.data.strip()
         hoa_don.ghi_chu = self.ghi_chu.data
         dbSession.add(hoa_don)
         dbSession.commit()
@@ -110,6 +113,15 @@ class Form_tao_san_pham(FlaskForm):
         dbSession.commit()
         return san_pham.get_id()
         
+
+class Form_xac_nhan_don_hang(FlaskForm):
+    gia_ban = fields.StringField('Giá bán:')
+    gia_nhap = fields.StringField('Giá nhập:')
+    so_luong = fields.IntegerField('Số lượng', widget=NumberInput())
+
+    # def cap_nhat_don_hang(self, ma_hd, ma_sp):
+
+
 
 class Form_QL_don_hang(FlaskForm):
     ma_hoa_don_tim_kiem = fields.IntegerField([validators.required()])

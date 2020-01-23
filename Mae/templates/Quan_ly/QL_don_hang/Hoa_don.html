@@ -35,37 +35,39 @@
                 <img src="{{url_for('static', filename = 'images/logo.png')}}" style="position: relative; left: 5mm;"
                     width="100%">
 
-                <p style="font-size:larger;margin-top: 5px; border: 0.5px solid black;"><b>{{chi_tiet_order['carrierName']}}</b></p>
+                <p style="font-size:larger;margin-top: 5px; border: 0.5px solid black;"><b>{{hoa_don.nha_van_chuyen}}</b></p>
             </div>
             <div class="col-8 text-center" style="font-size: large; margin-top:4mm;">
-                Mã vận đơn: <b>{{chi_tiet_order['trackingNumber']}}</b> <br>
+                Mã vận đơn: <b>{{hoa_don.ma_van_don}}</b> <br>
                 <div style="border-top: 1px dashed black;"></div>
-                Mã đơn hàng: <b>{{chi_tiet_order['orderNumber']}}</b>
+                Mã đơn hàng: <b>{{hoa_don.ma_hoa_don_kenh_ban}}</b>
+                <div style="border-top: 1px dashed black;"></div>
+                <small>{{hoa_don.ma_hoa_don}}</small>
                 
             </div>
         </div>
         <div style="border-bottom: 1px solid black; margin-top: 5px;"></div>
         <div class="row" style="font-size: 12pt;">
             <div class="col-12">
-                Từ: <b>Mae Cosmetics - 0906.813.557</b>
+                Từ: <b>Mae Cosmetics - 0906.813.557</b> - Kênh bán: {{hoa_don.kenh_ban}} 
                 <p>21 đường DD8, Phường Tân Hưng Thuận, Quận 12, Hồ Chí Minh</p>
             </div>
         </div>
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row" style="font-size: 12pt;">
             <div class="col-12">
-                Đến: <b>{{chi_tiet_order['receiverName']|title}} - {{chi_tiet_order['shippingContactPhone']}}</b>
-                <p>{{chi_tiet_order['regionName']}}</p>
+                Đến: <b>{{khach_hang.ten_khach_hang}} - {{khach_hang.dien_thoai}}</b>
+                <p>{{khach_hang.dia_chi}}</p>
             </div>
         </div>
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row" style="font-size: 12pt;">
             <div class="col-12">
-                <b>Tổng sản phẩm: {{don_hang|length}}</b>
+                <b>Tổng sản phẩm:</b> {{don_hang|length}} - <b>Thành tiền:</b> {{"{:,}".format(tong_tien)}} VNĐ
             </div>
             {%for item in don_hang%}
             <div class="col-12">
-                {{loop.index}} - {{item['productName']|title}} - SL:{{item['quantity']}}
+                {{loop.index}} - {{item.ten_san_pham|title}} - SL:{{item.so_luong}}
             </div>
 
             {%endfor%}
@@ -73,14 +75,21 @@
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row">
             <div class="col-12">
-                <b>Ghi chú </b>: {{chi_tiet_order['note']}}
+                <b>Phí vận chuyển</b> : {{hoa_don.phi_van_chuyen}}
             </div>
         </div>
+        <div style="border-bottom: 1px dashed black;"></div>
+        <div class="row">
+            <div class="col-12">
+                <b>Ghi chú </b>: {{hoa_don.ghi_chu}}
+            </div>
+        </div>
+        
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row" style="padding-top: 10px;">
             <div class="col-6 text-center">
                 <b>TIỀN THU NGƯỜI NHẬN</b>
-                <p>{{"{:,}".format(tong_tien)}} VND</p>
+                <p>{{"{:,}".format(tong_tien_don)}} VND</p>
             </div>
             <div class="col-5 text-center" style="height: 50mm; border: 1px solid grey;">
                 Nhân viên lấy hàng

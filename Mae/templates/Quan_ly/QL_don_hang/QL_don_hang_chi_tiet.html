@@ -1,64 +1,52 @@
 {%extends 'layout/master_manage.html'%}
-{%block title%} Hóa đơn {{chi_tiet_order['orderNumber']}} {%endblock%}
+{%block title%} Hóa đơn {{hoa_don.ma_hoa_don}} {%endblock%}
 {%block content%}
 
 <div class="container-fluid" style="margin: 20px auto;">
     <div class="row">
         <div class="col-md-12 text-center">
-            <h3>Thông tin hóa đơn #{{chi_tiet_order['orderNumber']}}</h3>
+            <h3>Thông tin hóa đơn #{{hoa_don.ma_hoa_don}}</h3>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <small><span {%if hoa_don.da_in_hd == 1 %} style="color:green;" {%else%} style="color:red;" {%endif%}>[{{trang_thai_1[hoa_don.da_in_hd]}}] </span>- <span {%if hoa_don.da_cap_nhat_kho == 1 %} style="color:green;" {%else%} style="color:red;" {%endif%}>[{{trang_thai_2[hoa_don.da_cap_nhat_kho]}}]</span></small>
-        </div>
-    </div>
+    
     <div class="row text-left">
         <div class="col-md-12">
-            Ngày tạo hóa đơn: <b>{{chi_tiet_order['orderDate']}}</b>
+            Ngày tạo hóa đơn: <b>{{hoa_don.ngay_tao_hoa_don}}</b>
         </div>
         <div class="col-md-12">
-            Tên khách hàng: <b>{{chi_tiet_order['receiverName']|title}}</b>
+            Tên khách hàng: <b>{{khach_hang.ten_khach_hang|title}}</b>
         </div>
         <div class="col-md-12">
-            Địa chỉ giao hàng: <b>{{chi_tiet_order['regionName']}}</b>
+            Địa chỉ giao hàng: <b>{{khach_hang.dia_chi}}</b>
         </div>
         <div class="col-md-12">
-            Số điện thoại liên lạc: <b>{{chi_tiet_order['buyerPhone']}}</b>
+            Số điện thoại liên lạc: <b>{{khach_hang.dien_thoai}}</b>
         </div>
         <div class="col-md-12">
-            Ghi chú của khách: {{chi_tiet_order['note']}}
+            Ghi chú của khách: {{hoa_don.ghi_chu}}
         </div>
         
         
     </div>
     <div class="row" style="margin: 40px auto;">
         <div class="col-md-12 text-center">
-            <h3>Thông tin đơn hàng</h3>
+            <h3>Thông tin đơn hàng {%if hoa_don.trang_thai == 13%} (ĐƠN HOÀN) {%endif%} </h3>
         </div>
         <div class="col-md-12 text-left">
-            <h4>Mã vận đơn: {{chi_tiet_order['trackingNumber']}}</h4>
+            <h4>Mã vận đơn: {{hoa_don.ma_van_don}}</h4>
 
         </div>
         <div class="col-md-12">
             
         </div>
-        {%if chi_tiet_order['orderStatus'] == 13%}
-        <div class="col-md-12 text-right" style="color:red;">
-            Trạng thái: Huỷ
-            
-            <p>
-                Lí do huỷ: {{chi_tiet_order['reasonCancel']}}
-            </p>
-        </div>
-        {%else%}
+        
         <div class="col-md-12 text-right">
-            Nhà vận chuyển: <b>{{chi_tiet_order['carrierName']}}</b>
+            Nhà vận chuyển: <b>{{hoa_don.nha_van_chuyen}}</b>
         </div>
         <div class="col-md-12 text-right">
-            Phí vận chuyển: {{chi_tiet_order['shippingFee']}}
+            Phí vận chuyển: {{hoa_don.phi_van_chuyen}}
         </div>
-        {%endif%}
+        
        
         
     </div>
@@ -70,7 +58,6 @@
                     <th scope="col">STT</th>
                     <th scope="col">Mã sản phẩm</th>
                     <th scope="col">Tên sản phẩm</th>
-                    <th scop="col">Trọng lượng</th>
                     <th scope="col">Số lượng</th>
                     <th scope="col">Giá bán</th>
                     <th scope="col">Thành tiền</th>
@@ -80,12 +67,11 @@
                 {%for item in don_hang%}
                 <tr>
                     <th scope="row">{{loop.index}}</th>
-                    <td>{{item['productVariantId']}}</td>
-                    <td>{{item['productName']|title}}</td>
-                    <td>{{item['weight']}}</td>
-                    <td>{{item['quantity']}}</td>
-                    <td>{{item['price']}}</td>
-                    <td>{{"{:,}".format(item['subTotal'])}}</td>
+                    <td>{{item.ma_san_pham}}</td>
+                    <td>{{item.ten_san_pham|title}}</td>
+                    <td>{{item.so_luong}}</td>
+                    <td>{{item.gia_ban}}</td>
+                    <td>{{"{:,}".format(item.gia_ban * item.so_luong)}}</td>
                     
                     
                 </tr>
@@ -96,23 +82,16 @@
     </div>
     <div class="row">
         <div class="col-md-12 text-right">
-            <b>Tổng cộng: {{"{:,}".format(tong_tien)}} VNĐ </b>
+            <b>Tổng cộng (chưa tính ship): {{"{:,}".format(tong_tien)}} VNĐ </b>
         </div>
     </div>
     
     <div class="row">
         <div class="col-md-12 text-center">
-            {%if hoa_don.da_in_hd == 0%}
-            <button class ="btn btn-dark">
-                <a href="{{url_for('in_hoa_don', hd_id = chi_tiet_order['orderNumber'])}}" target="_blank" style="color:white;">In hoá đơn</a>
-                 
+            <button class="btn btn-danger">
+                <a href="{{url_for('don_hoan_cap_nhat_kho', hd_id = hoa_don.ma_hoa_don)}}" style="color:white;">Cho vào kho</a>
             </button>
-            {%endif%}
-            {%if hoa_don.da_cap_nhat_kho == 0%}
-            <button class="btn btn-success">
-                <a href="{{url_for('ql_kho_xuat_hang', hd_id = chi_tiet_order['orderNumber'])}}" style="color:white;">Cập nhật kho</a>
-            </button>
-            {%endif%}
+            
         </div>
         
         

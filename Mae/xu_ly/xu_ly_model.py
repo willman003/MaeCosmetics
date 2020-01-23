@@ -107,6 +107,7 @@ class Hoa_don(Base):
     kenh_ban = Column(String(100))
     ma_hoa_don_kenh_ban = Column(String(50))
     nha_van_chuyen = Column(String(255))
+    phi_van_chuyen = Column(Float)
     ma_van_don = Column(String(100))
     trang_thai = Column(Integer)
     ghi_chu = Column(Text)

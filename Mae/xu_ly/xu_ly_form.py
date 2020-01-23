@@ -65,6 +65,7 @@ class Form_hoa_don(FlaskForm):
     ,('Others','Khác')
     ])
     ma_van_don = fields.StringField('Mã vận đơn:')
+    phi_van_chuyen = fields.FloatField('Phí ship:')
     ghi_chu = fields.TextField('Ghi chú:')
     submit = fields.SubmitField('Kế tiếp')
 
@@ -86,6 +87,7 @@ class Form_hoa_don(FlaskForm):
         hoa_don.kenh_ban = self.kenh_ban.data
         hoa_don.nha_van_chuyen = self.nha_van_chuyen.data
         hoa_don.ma_van_don = self.ma_van_don.data.strip()
+        hoa_don.phi_van_chuyen = self.phi_van_chuyen.data
         hoa_don.ghi_chu = self.ghi_chu.data
         dbSession.add(hoa_don)
         dbSession.commit()
@@ -119,7 +121,8 @@ class Form_xac_nhan_don_hang(FlaskForm):
     gia_nhap = fields.StringField('Giá nhập:')
     so_luong = fields.IntegerField('Số lượng', widget=NumberInput())
 
-    # def cap_nhat_don_hang(self, ma_hd, ma_sp):
+class Form_don_hang_hoan(FlaskForm):
+    ma_hoa_don = fields.StringField('Mã hóa đơn:')
 
 
 

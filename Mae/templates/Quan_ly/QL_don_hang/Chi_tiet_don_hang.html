@@ -1,5 +1,12 @@
 {%extends 'layout/master_manage.html'%}
 {%block content%}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item " ><a href="{{url_for('ql_don_hang_tao_don_moi')}}">Thông tin</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><a href="#">Đơn hàng</a></li>
+    
+  </ol>
+</nav>
 <div class="container">
     <div class="row">
         <div class="col-sm-12 text-center">

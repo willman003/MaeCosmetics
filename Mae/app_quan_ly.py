@@ -98,14 +98,16 @@ def ql_don_hang():
     if request.form.get('Th_hoa_don'):
         dieu_khien = request.form.get('Th_hoa_don')
         if dieu_khien == 'DonHoan':
-            dia_chi = url_for('ql_don_hang_chua_in')
+            dia_chi = url_for('ql_don_hang_hoan')
         elif dieu_khien == 'TraCuu':
-            dia_chi = url_for('ql_don_hang_da_in')
+            dia_chi = url_for('ql_don_hang_theo_ma')
         elif dieu_khien == 'TaoDonMoi':
             dia_chi = url_for('ql_don_hang_tao_don_moi')
         
         
     return render_template('Quan_ly/MH_QL_don_hang.html', dia_chi = dia_chi)
+
+#------------------Tạo đơn mới
 
 @app.route("/QL-don-hang/new", methods = ['GET','POST'])
 def ql_don_hang_tao_don_moi():
@@ -169,6 +171,17 @@ def ql_don_hang_xoa_khoi_don_hang(ma_hd, ma_sp):
     dbSession.commit()
     return redirect(url_for('ql_don_hang_tao_don_moi_detail', ma_hd=ma_hd,page=1))
 
+@app.route('/QL-don-hang/new/hd_<int:ma_hd>/xoa_sp_2_<int:ma_sp>',methods=['GET','POST'])
+def ql_don_hang_xoa_khoi_don_hang_2(ma_hd, ma_sp):
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
+        return redirect(url_for('dang_nhap', next=request.url))
+    if not ma_hd:
+        return redirect(url_for('ql_don_hang_tao_don_moi'))
+    don_hang = dbSession.query(Don_hang).filter(and_(Don_hang.ma_hoa_don == ma_hd,Don_hang.ma_san_pham == ma_sp)).first()
+    dbSession.delete(don_hang)
+    dbSession.commit()
+    return redirect(url_for('ql_don_hang_confirm', ma_hd=ma_hd))
+
 @app.route('/QL-don-hang/new/hd_<int:ma_hd>/cap_nhat_sp_<int:ma_sp>',methods=['GET','POST'])
 def ql_don_hang_cap_nhat_don_hang(ma_hd, ma_sp):
     if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
@@ -194,75 +207,116 @@ def ql_don_hang_confirm(ma_hd):
     hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == ma_hd).first()
     khach_hang = dbSession.query(Khach_hang).filter(Khach_hang.ma_khach_hang == hoa_don.ma_khach_hang).first()
     don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == ma_hd).all()
-    
+    tong_tien = 0
+    for item in don_hang:
+        tong_tien += item.gia_ban * item.so_luong
 
-    return render_template('Quan_ly/QL_don_hang/Xac_nhan_don_hang.html', form_don_hang = form_don_hang, form_hoa_don = form_hoa_don, khach_hang = khach_hang, hoa_don = hoa_don, don_hang = don_hang)
+    return render_template('Quan_ly/QL_don_hang/Xac_nhan_don_hang.html', tong_tien = tong_tien, form_don_hang = form_don_hang, form_hoa_don = form_hoa_don, khach_hang = khach_hang, hoa_don = hoa_don, don_hang = don_hang)
 
-@app.route('/QL-kho/cap-nhat-kho-hang/hd_<string:hd_id>', methods =['GET','POST'])
+@app.route('/QL-kho/cap-nhat-kho-hang/hd_<int:hd_id>', methods =['GET','POST'])
 def ql_kho_xuat_hang(hd_id):
     if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
         return redirect(url_for('dang_nhap', next=request.url))
     
     hd = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
-    
+    kh = dbSession.query(Khach_hang).filter(Khach_hang.ma_khach_hang == hd.ma_khach_hang).first()
     don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == hd_id).all()
+    tong_tien = 0
     for item in don_hang:
         sp = dbSession.query(San_pham).filter(San_pham.ma_san_pham == item.ma_san_pham).first()
         sp.so_luong_ton -= item.so_luong
+        tong_tien = item.so_luong * item.gia_ban
         dbSession.add(sp)
         dbSession.commit()
+    hd.tong_tien = tong_tien    
     hd.da_cap_nhat_kho = 1
     dbSession.add(hd)
     dbSession.commit()
-    return redirect(url_for('ql_don_hang_tao_don_moi'))
+    return redirect(url_for('in_hoa_don', hd_id = hd_id))
 
-@app.route("/QL-don-hang/huy", methods = ['GET','POST'])
-def ql_don_hang_huy():
+@app.route("/Ql-don-hang/in-hoa-don/hd_<int:hd_id>", methods =['GET','POST'])
+def in_hoa_don(hd_id):
     if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
         return redirect(url_for('dang_nhap', next=request.url))
+    hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
+    don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == hd_id).all()
+    khach_hang = dbSession.query(Khach_hang).filter(Khach_hang.ma_khach_hang == hoa_don.ma_khach_hang).first()
+    tong_tien = 0
     
-    hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(Hoa_don.trang_thai == 13).order_by(Hoa_don.ngay_tao_hoa_don.desc()).all()
-    today = datetime.now()
-    from_day = today.date() - timedelta(days=10)
-    chuoi_thong_bao = 'Dữ liệu từ ngày ' + from_day.strftime("%d-%m-%Y") + ' đến ' + today.strftime('%d-%m-%Y') 
+    for item in don_hang:
+        tong_tien += item.gia_ban * item.so_luong
+    tong_tien_don = tong_tien + hoa_don.phi_van_chuyen
     
-    return render_template('/Quan_ly/QL_don_hang/QL_don_hang_all.html',chuoi_thong_bao = chuoi_thong_bao, hoa_don = hoa_don)
+    return render_template('Quan_ly/QL_don_hang/Hoa_don.html', tong_tien_don = tong_tien_don, khach_hang = khach_hang, hoa_don = hoa_don, don_hang = don_hang, tong_tien = tong_tien)
+
+
+#------------------END TẠO ĐƠN MỚI
+
+@app.route("/QL-don-hang/hoan", methods = ['GET','POST'])
+def ql_don_hang_hoan():
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
+        return redirect(url_for('dang_nhap', next=request.url))
+    form = Form_don_hang_hoan()
+    hoa_don = None
+    chuoi_thong_bao = ''
+    if form.validate_on_submit():
+        tim_kiem = form.ma_hoa_don.data.strip()
+        
+        hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(Hoa_don.ma_hoa_don == tim_kiem).first()
+        
+        if hoa_don != None:
+            chuoi_thong_bao = 'Không tìm thấy mã hóa đơn ' + tim_kiem 
+    
+    return render_template('/Quan_ly/QL_don_hang/QL_don_hang_theo_ma_hd.html',form = form, chuoi_thong_bao = chuoi_thong_bao, hoa_don = hoa_don)
+
 
 @app.route("/QL-don-hang/theo-ma-hd", methods = ['GET','POST'])
 def ql_don_hang_theo_ma():
     if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
         return redirect(url_for('dang_nhap', next=request.url))
-    form = Form_QL_don_hang()
+    form = Form_don_hang_hoan()
     hoa_don = None
-    tieu_de = ''
-    trang_thai ={2:"Mới",6:"Đang vận chuyển",13:"Huỷ"}
+    chuoi_thong_bao = ''
     if form.validate_on_submit():
-        hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(Hoa_don.ma_hoa_don_sendo == str(form.ma_hoa_don_tim_kiem.data)).first()
-        if hoa_don == None:
-            tieu_de = 'Không tìm thấy mã hoá đơn ' + str(form.ma_hoa_don_tim_kiem.data)
-        else:
-            tieu_de = 'Đơn hàng ' + hoa_don.ma_hoa_don_sendo
+        tim_kiem = form.ma_hoa_don.data.strip()
+        
+        hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(Hoa_don.ma_hoa_don == tim_kiem).first()
+        
+        if hoa_don != None:
+            chuoi_thong_bao = 'Không tìm thấy mã hóa đơn ' + tim_kiem
 
             
-    return render_template('Quan_ly/QL_don_hang/QL_don_hang_theo_ma_hd.html', trang_thai = trang_thai, tieu_de = tieu_de, form = form, hoa_don = hoa_don)
+    return render_template('Quan_ly/QL_don_hang/QL_don_hang_theo_ma_hd.html', form = form, hoa_don = hoa_don)
 
-
-@app.route("/Ql-don-hang/in-hoa-don/hd_<string:hd_id>", methods =['GET','POST'])
-def in_hoa_don(hd_id):
+@app.route('/QL-don-hang/chi-tiet/hd_<int:hd_id>', methods=['GET','POST'])
+def chi_tiet_order(hd_id):
     if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
         return redirect(url_for('dang_nhap', next=request.url))
-    order = Lay_thong_tin_chi_tiet_order(hd_id)
-    
-    chi_tiet_order = order['salesOrder']
-    don_hang = order['salesOrderDetails']
+    hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
+    khach_hang = dbSession.query(Khach_hang).filter(Khach_hang.ma_khach_hang == hoa_don.ma_khach_hang).first()
+    don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == hd_id).all()
     tong_tien = 0
     for item in don_hang:
-        tong_tien += item['subTotal']
-    tong_tien += chi_tiet_order['shippingFee']
-    
-    return render_template('Quan_ly/QL_don_hang/Hoa_don.html', chi_tiet_order = chi_tiet_order, don_hang = don_hang, tong_tien = tong_tien)
+        tong_tien += item.so_luong * item.gia_ban
+    return render_template('Quan_ly/QL_don_hang/QL_don_hang_chi_tiet.html', tong_tien = tong_tien, don_hang = don_hang, khach_hang = khach_hang, hoa_don = hoa_don)
 
+@app.route('/QL-don-hang/hoan/cho-vao-kho/hd_<int:hd_id>',methods=['GET','POST'])
+def don_hoan_cap_nhat_kho(hd_id):
+    hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
+    don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == hd_id).all()
+    for item in don_hang:
+        sp = dbSession.query(San_pham).filter(San_pham.ma_san_pham == item.ma_san_pham).first()
+        sp.so_luong_ton += item.so_luong
+        dbSession.add(sp)
+        dbSession.commit()
+    hoa_don.trang_thai = 13
+    hoa_don.ghi_chu += '[ĐƠN HOÀN] ' + datetime.now().strftime("%d-%m-%Y %H:%S")
+    dbSession.add(hoa_don)
+    dbSession.commit()
 
+    return redirect(url_for('chi_tiet_order',hd_id = hd_id))
+
+#------------Kho
 @app.route('/QL-kho/san-pham/moi',methods=['GET','POST'])
 def ql_kho_san_pham_moi():
     thong_bao = ''
@@ -290,6 +344,8 @@ def ql_kho():
             dia_chi = url_for('ql_kho_nhap_hang')
         elif dieu_khien == 'SoLuongTon':
             dia_chi = url_for('ql_so_luong_ton')
+        elif dieu_khien == 'SanPhamMoi':
+            dia_chi = url_for('ql_kho_san_pham_moi')
 
     return render_template('Quan_ly/QL_kho_hang/MH_QL_kho_hang.html', dia_chi = dia_chi)
 

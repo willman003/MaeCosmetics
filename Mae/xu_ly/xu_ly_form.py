@@ -141,7 +141,11 @@ class Form_nhap_hang(FlaskForm):
     gia_nhap = fields.IntegerField(widget=NumberInput())
     
 class Form_cap_nhat_san_pham(FlaskForm):
+    ten_loai = fields.SelectField('Loại:')
     gia_ban = fields.IntegerField(widget=NumberInput())
+    gia_nhap = fields.IntegerField(widget=NumberInput())
+    thuoc_tinh = fields.TextField()
+    submit = fields.SubmitField('Cập nhật')
 
 class Form_y_kien(FlaskForm):
     ma_khach_hang = fields.IntegerField('Mã khách hàng')

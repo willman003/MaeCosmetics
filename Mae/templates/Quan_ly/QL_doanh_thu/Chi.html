@@ -97,7 +97,7 @@
                 <tr>
                   <th scope="row">{{khoan_chi.thoi_gian.strftime("%d-%m-%Y %H:%M:%S")}}</th>
                   <td>{{khoan_chi.ten}}</td>
-                  <td>{{khoan_chi.so_tien}}</td>
+                  <td>{{"{:,}".format(khoan_chi.so_tien)}} VNĐ</td>
                   <td>{{khoan_chi.noi_dung}}</td>
                 </tr>
               {%endfor%}

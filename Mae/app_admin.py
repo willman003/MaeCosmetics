@@ -43,19 +43,19 @@ def user_register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = Form_dang_ky()
-    
+    thong_bao = ''
     if form.validate_on_submit():
         form.validate_ten_dang_nhap(form.ten_dang_nhap.data)
         user = Nguoi_dung()
         form.populate_obj(user)
         user.ten_dang_nhap = form.ten_dang_nhap.data
         user.mat_khau_hash = generate_password_hash(form.mat_khau.data)
-        user.ma_loai_nguoi_dung = 2
+        user.ma_loai_nguoi_dung = 1
         dbSession.add(user)
         dbSession.commit()
         
         login.login_user(user)
-        return redirect(url_for('index'))
+        thong_bao = 'Đăng ký thành công! Liên hệ admin để được cấp quyền truy cập.'
     
-    return render_template('Quan_ly/MH_Dang_ky.html',form = form)
+    return render_template('Quan_ly/MH_Dang_ky.html',form = form, thong_bao = thong_bao)
 

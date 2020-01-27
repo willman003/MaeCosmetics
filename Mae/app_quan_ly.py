@@ -43,7 +43,7 @@ class admin_view(ModelView):
 
 @app.route('/', methods=['GET','POST'])
 def index():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
         return redirect(url_for('log_in', next=request.url))
     dia_chi_frame = url_for('cap_nhat_tu_API')
     if request.form.get('Th_Ma_so'):
@@ -61,8 +61,8 @@ def index():
 
 @app.route('/cap-nhat-don-hang',methods=['GET','POST'])
 def cap_nhat_tu_API():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     dia_chi = url_for('cap_nhat_tu_API')
     ten = "đơn hàng"
     thong_bao = ''
@@ -75,8 +75,8 @@ def cap_nhat_tu_API():
 
 @app.route('/cap-nhat-san-pham',methods=['GET','POST'])
 def cap_nhat_sp_tu_API():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     thong_bao = ''
     ten = "sản phẩm"
     dia_chi = url_for('cap_nhat_sp_tu_API')
@@ -92,8 +92,8 @@ def cap_nhat_sp_tu_API():
 
 @app.route('/QL-don-hang', methods =['GET','POST'])
 def ql_don_hang():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     dia_chi = url_for('ql_don_hang_tao_don_moi')
     if request.form.get('Th_hoa_don'):
         dieu_khien = request.form.get('Th_hoa_don')
@@ -111,6 +111,8 @@ def ql_don_hang():
 
 @app.route("/QL-don-hang/new", methods = ['GET','POST'])
 def ql_don_hang_tao_don_moi():
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form_hoa_don = Form_hoa_don()
     
     if form_hoa_don.validate_on_submit():
@@ -123,6 +125,8 @@ def ql_don_hang_tao_don_moi():
 
 @app.route('/QL-don-hang/new/hd_<int:ma_hd>/<int:page>',methods = ['GET','POST'])
 def ql_don_hang_tao_don_moi_detail(ma_hd,page=1):
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_tim_kiem_nhap_hang()
     hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == ma_hd).first()
     don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == ma_hd).all()
@@ -143,8 +147,8 @@ def ql_don_hang_tao_don_moi_detail(ma_hd,page=1):
 
 @app.route('/QL-don-hang/new/hd_<int:ma_hd>/them_sp_<int:ma_sp>',methods=['GET','POST'])
 def ql_don_hang_them_vao_don_hang(ma_hd, ma_sp):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     if not ma_hd:
         return redirect(url_for('ql_don_hang_tao_don_moi'))
     don_hang = Don_hang()
@@ -162,8 +166,8 @@ def ql_don_hang_them_vao_don_hang(ma_hd, ma_sp):
 
 @app.route('/QL-don-hang/new/hd_<int:ma_hd>/xoa_sp_<int:ma_sp>',methods=['GET','POST'])
 def ql_don_hang_xoa_khoi_don_hang(ma_hd, ma_sp):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     if not ma_hd:
         return redirect(url_for('ql_don_hang_tao_don_moi'))
     don_hang = dbSession.query(Don_hang).filter(and_(Don_hang.ma_hoa_don == ma_hd,Don_hang.ma_san_pham == ma_sp)).first()
@@ -173,8 +177,8 @@ def ql_don_hang_xoa_khoi_don_hang(ma_hd, ma_sp):
 
 @app.route('/QL-don-hang/new/hd_<int:ma_hd>/xoa_sp_2_<int:ma_sp>',methods=['GET','POST'])
 def ql_don_hang_xoa_khoi_don_hang_2(ma_hd, ma_sp):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     if not ma_hd:
         return redirect(url_for('ql_don_hang_tao_don_moi'))
     don_hang = dbSession.query(Don_hang).filter(and_(Don_hang.ma_hoa_don == ma_hd,Don_hang.ma_san_pham == ma_sp)).first()
@@ -184,8 +188,8 @@ def ql_don_hang_xoa_khoi_don_hang_2(ma_hd, ma_sp):
 
 @app.route('/QL-don-hang/new/hd_<int:ma_hd>/cap_nhat_sp_<int:ma_sp>',methods=['GET','POST'])
 def ql_don_hang_cap_nhat_don_hang(ma_hd, ma_sp):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     if not ma_hd:
         return redirect(url_for('ql_don_hang_tao_don_moi'))
     form_don_hang = Form_xac_nhan_don_hang()
@@ -202,6 +206,8 @@ def ql_don_hang_cap_nhat_don_hang(ma_hd, ma_sp):
 
 @app.route('/QL-don-hang/new/hd_<int:ma_hd>/confirm',methods=['GET','POST'])
 def ql_don_hang_confirm(ma_hd):
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form_hoa_don = Form_hoa_don()
     form_don_hang = Form_xac_nhan_don_hang()
     hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == ma_hd).first()
@@ -215,8 +221,8 @@ def ql_don_hang_confirm(ma_hd):
 
 @app.route('/QL-kho/cap-nhat-kho-hang/hd_<int:hd_id>', methods =['GET','POST'])
 def ql_kho_xuat_hang(hd_id):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     
     hd = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
     kh = dbSession.query(Khach_hang).filter(Khach_hang.ma_khach_hang == hd.ma_khach_hang).first()
@@ -236,8 +242,8 @@ def ql_kho_xuat_hang(hd_id):
 
 @app.route("/Ql-don-hang/in-hoa-don/hd_<int:hd_id>", methods =['GET','POST'])
 def in_hoa_don(hd_id):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
     don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == hd_id).all()
     khach_hang = dbSession.query(Khach_hang).filter(Khach_hang.ma_khach_hang == hoa_don.ma_khach_hang).first()
@@ -254,8 +260,8 @@ def in_hoa_don(hd_id):
 
 @app.route("/QL-don-hang/hoan", methods = ['GET','POST'])
 def ql_don_hang_hoan():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_don_hang_hoan()
     hoa_don = None
     chuoi_thong_bao = ''
@@ -272,8 +278,8 @@ def ql_don_hang_hoan():
 
 @app.route("/QL-don-hang/theo-ma-hd", methods = ['GET','POST'])
 def ql_don_hang_theo_ma():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_don_hang_hoan()
     hoa_don = None
     chuoi_thong_bao = ''
@@ -290,8 +296,8 @@ def ql_don_hang_theo_ma():
 
 @app.route('/QL-don-hang/chi-tiet/hd_<int:hd_id>', methods=['GET','POST'])
 def chi_tiet_order(hd_id):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
     khach_hang = dbSession.query(Khach_hang).filter(Khach_hang.ma_khach_hang == hoa_don.ma_khach_hang).first()
     don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == hd_id).all()
@@ -302,6 +308,8 @@ def chi_tiet_order(hd_id):
 
 @app.route('/QL-don-hang/hoan/cho-vao-kho/hd_<int:hd_id>',methods=['GET','POST'])
 def don_hoan_cap_nhat_kho(hd_id):
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don == hd_id).first()
     don_hang = dbSession.query(Don_hang).filter(Don_hang.ma_hoa_don == hd_id).all()
     for item in don_hang:
@@ -319,6 +327,8 @@ def don_hoan_cap_nhat_kho(hd_id):
 #------------Kho
 @app.route('/QL-kho/san-pham/moi',methods=['GET','POST'])
 def ql_kho_san_pham_moi():
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     thong_bao = ''
     form = Form_tao_san_pham()
     form.ten_loai.choices = tao_danh_sach_category()
@@ -335,41 +345,44 @@ def ql_kho_san_pham_moi():
 
 @app.route('/QL-kho', methods = ['GET','POST'])
 def ql_kho():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     dia_chi = url_for('ql_kho_san_pham_moi')
     if request.method == 'POST':
         dieu_khien = request.form.get('Th_kho_hang')
         if dieu_khien == 'NhapHang':
-            dia_chi = url_for('ql_kho_nhap_hang')
+            dia_chi = url_for('ql_kho_nhap_hang',page=1)
         elif dieu_khien == 'SoLuongTon':
-            dia_chi = url_for('ql_so_luong_ton')
+            dia_chi = url_for('ql_so_luong_ton',page=1)
         elif dieu_khien == 'SanPhamMoi':
             dia_chi = url_for('ql_kho_san_pham_moi')
 
     return render_template('Quan_ly/QL_kho_hang/MH_QL_kho_hang.html', dia_chi = dia_chi)
 
-@app.route('/QL-kho/nhap-hang', methods = ['GET','POST'])
-def ql_kho_nhap_hang():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+@app.route('/QL-kho/nhap-hang/<int:page>', methods = ['GET','POST'])
+def ql_kho_nhap_hang(page):
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_tim_kiem_nhap_hang()
-    san_pham = []
+    query = BaseQuery(San_pham, dbSession)
+    page_filter = query.paginate(page,5,False)
+    thong_bao = ''
     if form.validate_on_submit():
         tim_kiem = form.noi_dung.data
         
         if tim_kiem.isdigit():
-            san_pham = dbSession.query(San_pham).filter(San_pham.ma_san_pham == int(tim_kiem)).all()
+            page_filter = query.filter(San_pham.ma_san_pham == int(tim_kiem)).paginate(page,5,False)
         else:
             chuoi_truy_van = '%'+tim_kiem.upper()+'%'
-            san_pham = dbSession.query(San_pham).filter(San_pham.ten_san_pham.like(chuoi_truy_van)).all()
-    
-    return render_template('Quan_ly/QL_kho_hang/Nhap_hang.html', form = form, san_pham = san_pham)
+            page_filter = query.filter(San_pham.ten_san_pham.like(chuoi_truy_van)).paginate(page,5,False)
+        if len(page_filter.items) == 0:
+            thong_bao = 'Không tìm thấy sản phẩm!'
+    return render_template('Quan_ly/QL_kho_hang/Nhap_hang.html', form = form, page_filter = page_filter, thong_bao = thong_bao)
 
 @app.route('/QL-kho/nhap/sp_<int:ma_sp>', methods = ['GET','POST'])
 def ql_kho_nhap_chi_tiet(ma_sp):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_nhap_hang()
     san_pham = dbSession.query(San_pham).filter(San_pham.ma_san_pham == ma_sp).first()
     chuoi_thong_bao = ''
@@ -386,10 +399,17 @@ def ql_kho_nhap_chi_tiet(ma_sp):
 
 @app.route('/QL-kho/cap-nhat-sp/sp_<int:ma_sp>', methods = ['GET','POST'])
 def ql_cap_nhat_sp(ma_sp):
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_cap_nhat_san_pham()
     san_pham = dbSession.query(San_pham).filter(San_pham.ma_san_pham == ma_sp).first()
+    loai = dbSession.query(Loai_san_pham).filter(Loai_san_pham.ma_loai == san_pham.ma_loai).first()
+    form.gia_nhap.data = san_pham.gia_nhap
+    form.thuoc_tinh.data = san_pham.thuoc_tinh
+    form.ten_loai.choices = tao_danh_sach_category()
+    if san_pham.ma_loai: 
+        form.ten_loai.data = loai.ten_loai
+
     chuoi_thong_bao = ''
     today = datetime.now()
     if form.validate_on_submit():
@@ -398,30 +418,33 @@ def ql_cap_nhat_sp(ma_sp):
         san_pham.current_edit_price = today.strftime("%d-%m-%Y %H:%M:%S")
         dbSession.add(san_pham)
         dbSession.commit()
-        chuoi_thong_bao = "Thay đổi thành công, giá bán mới: " + "{:,}".format(gia_ban_moi)
+        chuoi_thong_bao = "Cập nhật thành công!"
     return render_template('Quan_ly/QL_kho_hang/Cap_nhat_san_pham.html', form = form, san_pham  = san_pham, chuoi_thong_bao = chuoi_thong_bao)
 
-@app.route('/QL-kho/ton-kho', methods = ['GET', 'POST'])
-def ql_so_luong_ton():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+@app.route('/QL-kho/ton-kho/<int:page>', methods = ['GET', 'POST'])
+def ql_so_luong_ton(page):
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_tim_kiem()
-    san_pham= []
+    query = BaseQuery(San_pham, dbSession)
+    page_filter = query.paginate(page,5,False)
     if form.validate_on_submit():
         tim_kiem = form.noi_dung.data
         if tim_kiem.isdigit():
-            san_pham = dbSession.query(San_pham).filter(San_pham.ma_san_pham == tim_kiem).all()
+            page_filter = query.filter(San_pham.ma_san_pham == int(tim_kiem)).paginate(page,5,False)
         else:
             chuoi_truy_van = '%'+tim_kiem.upper()+'%'
-            san_pham = dbSession.query(San_pham).filter(San_pham.ten_san_pham.like(chuoi_truy_van)).all()
+            page_filter = query.filter(San_pham.ten_san_pham.like(chuoi_truy_van)).paginate(page,5,False)
+        if len(page_filter.items) == 0:
+            thong_bao = 'Không tìm thấy sản phẩm!'
     
-    return render_template('Quan_ly/QL_kho_hang/Ton_kho.html', form=form, san_pham = san_pham)
+    return render_template('Quan_ly/QL_kho_hang/Ton_kho.html', form=form, page_filter = page_filter)
 
 @app.route('/QL-doanh-thu', methods = ['GET','POST'])
 def ql_doanh_thu():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
-    dia_chi = ''
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
+    dia_chi = url_for('ql_doanh_thu_today')
     if request.method == 'POST':
         dieu_khien = request.form.get('Th_doanh_thu')
         if dieu_khien == 'ChiPhi':
@@ -437,8 +460,8 @@ def ql_doanh_thu():
 
 @app.route('/QL-doanh-thu/chi', methods =['GET','POST'])
 def ql_doanh_thu_chi():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     today = datetime.now()
     ngay_dau_thang = datetime(today.year, today.month, 1)
     str_temp_1 = calendar.monthrange(today.year, today.month)
@@ -467,11 +490,11 @@ def ql_doanh_thu_chi():
 
 @app.route('/QL-doanh-thu/ngay-hom-nay', methods = ['GET','POST'])
 def ql_doanh_thu_today():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     today = datetime.now()
     prev_day = datetime(today.year,today.month,today.day)
-    ds_hoa_don = dbSession.query(Hoa_don).filter(and_(Hoa_don.ngay_tao_hoa_don.between(prev_day, today),Hoa_don.trang_thai!=13)).all()
+    ds_hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ngay_tao_hoa_don.between(prev_day, today)).all()
     dict_sp_trong_ngay = {}
     tong_loi_nhuan = 0
    
@@ -498,8 +521,8 @@ def ql_doanh_thu_today():
     
 @app.route('/QL-doanh-thu/theo-ngay', methods = ['GET','POST'])
 def ql_doanh_thu_theo_ngay():
-    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
-        return redirect(url_for('dang_nhap', next=request.url))
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_xem_khoan_chi()
     today = datetime.now()
     ngay_dau_thang = datetime(today.year, today.month, 1)
@@ -545,6 +568,8 @@ def ql_doanh_thu_theo_ngay():
 
 @app.route('/QL-doanh-thu/tong-ket',methods=['GET','POST'])
 def ql_doanh_thu_tong_ket():
+    if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 2:
+        return redirect(url_for('log_in', next=request.url))
     form = Form_xem_khoan_chi()
     today = datetime.now()
     ngay_dau_thang = datetime(today.year, today.month, 1)
@@ -572,3 +597,7 @@ admin = Admin(app, name = "Admin", index_view=MyAdminIndexView(name="Admin"), te
 admin.add_view(admin_view(Loai_nguoi_dung, dbSession, 'Loại người dùng'))
 admin.add_view(admin_view(Nguoi_dung, dbSession, 'Người dùng'))
 admin.add_view(admin_view(Loai_san_pham, dbSession, 'Loại sản phẩm'))
+admin.add_view(admin_view(San_pham, dbSession, 'Sản phẩm'))
+admin.add_view(admin_view(Hoa_don, dbSession, 'Hoá đơn'))
+admin.add_view(admin_view(Don_hang, dbSession, 'Đơn hàng'))
+admin.add_view(admin_view(Thu_chi, dbSession, 'Thu chi'))

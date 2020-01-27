@@ -12,6 +12,10 @@
             </div>
         </div>
         <div class="form-row">
+            <label class="form-group col-md-4" for="ten_loai">Loại:</label>
+            {{form.ten_loai(class="form-group custom-select form-control col-md-4")}}
+        </div>
+        <div class="form-row">
             <div class="form-group col-md-4">
                 Lần cập nhật gần nhất:
             </div>
@@ -30,10 +34,23 @@
         </div>
         <div class="form-row">
             <label class="form-group col-md-4" for="so_luong_nhap">Giá bán mới:</label>
-            {{form.gia_ban(class="form-group col-md-8")}}
+            {{form.gia_ban(class="form-group form-control col-md-8")}}
+        </div>
+        <div class="form-row">
+            <label class="form-group col-md-4" for="gia_nhap">Giá nhập:</label>
+            {{form.gia_nhap(class="form-group form-control col-md-8")}}
+        </div>
+        <div class="form-row">
+            <label class="form-group col-md-4" for="thuoc_tinh">Thuộc tính:</label>
+            {{form.thuoc_tinh(class="form-group form-control col-md-8")}}
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                {{form.submit(class="btn btn-success")}}
+            </div>
         </div>
         {%if chuoi_thong_bao != ''%}
-        <div class="form-row text-center">
+        <div class="form-row text-center" style="margin: 20px auto;">
             <div class="form-group col-md-12">
                 <div class="alert alert-success" role="alert">
                     {{chuoi_thong_bao}}
